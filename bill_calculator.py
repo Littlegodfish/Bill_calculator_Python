@@ -8,53 +8,57 @@
 # Output 
 # 1) Each person's final cost 
 
+# Target: separate eahc funciton into blocks instead of main 
 
-def make_list(list_of_ppl):
-    names_list = list_of_ppl.split()
+def collect_input():
+    people_string = input("Everyone's names separated by space: ")
+    subtotal = float(input("Subtotal before Tax and Tip: "))
+    tax = float(input("Tax Amount: "))
+    tip = float(input("Tip Amount: "))
+    choice = input("Split Tip evenly? (y/n): ")
+    evenly_split_tip = choice.lower() == "y" #Boolean
+    return people_string, subtotal, tax, tip, evenly_split_tip
+
+def make_list(people_string):
+    people_list = people_string.split()
     money_list = []
-    for name in names_list:
+    for name in people_list:
            money_list.append(float(input("Initial Cost for " + name + " :")))
-    return money_list, names_list
+    return money_list, people_list, len(money_list)
 
-def tax_calculator(subtotal, tax):
-    return (tax/subtotal)
+def subtotal_checker(subtotal, money_list):
+    if round(sum(money_list), 2) != round(subtotal, 2):
+        print("Warning: Sum of each person's cost does not match the subtotal")
 
-def tip_calculator(tip, subtotal):
-     return (tip/subtotal)
-
-def final_cost_calculator(money_list, tax_percentage, tip_percentage, evenly_split_tip, even_tip):
+def tax_tip_calculation(tax, tip, subtotal, money_list, evenly_split_tip, number_of_ppl):
     new_money_list = money_list.copy()
+    tax_percentage = (tax/subtotal)
+    tip_percentage = (tip/subtotal)
     for i in range(len(money_list)):
         new_money_list[i] += money_list[i] * tax_percentage
+
     if evenly_split_tip:
-        for i in range(len(new_money_list)):
+        even_tip = (tip / number_of_ppl)
+        for i in range(len(money_list)):
             new_money_list[i] += even_tip
-    else:
-        for i in range(len(new_money_list)):
+    else: 
+        for i in range(len(money_list)):
             new_money_list[i] += money_list[i] * tip_percentage
     return new_money_list
-def print_out(new_money_list, names_list):
+
+def print_out(new_money_list, people_list):
     total = 0 
-    for i in range(len(names_list)):
-        print(names_list[i], " pays:", round(new_money_list[i],2))
+    for i in range(len(people_list)):
+        print(people_list[i], " pays:", round(new_money_list[i],2))
         total += new_money_list[i]
     print("Grand Total: " + str(round(total, 2)))
+
 def main():
-    string_of_ppl = input("Everyone's names separated by space: ")
-    money_list, names_list = make_list(string_of_ppl)
-    number_of_ppl = len(names_list)
-    subtotal = float(input("Subtotal before Tax and Tip: "))
-    if round(sum(money_list), 2) != round(subtotal, 2):
-        print("Warning: individual costs do not match subtotal.")
-    tax = float(input("Tax Amount: "))
-    tax_percentage = tax_calculator(subtotal, tax)
-    choice = input("Split Tip evenly? (y/n): ")
-    evenly_split_tip = choice.lower() == "y"
-    tip = float(input("Tip Amount: "))
-    even_tip = tip/number_of_ppl
-    tip_percentage = tip_calculator(tip, subtotal)
-    new_money_list = final_cost_calculator(money_list, tax_percentage, tip_percentage, evenly_split_tip, even_tip)
-    print_out(new_money_list, names_list)
+    people_string, subtotal, tax, tip, evenly_split_tip = collect_input()
+    money_list, people_list, number_of_ppl = make_list(people_string)
+    subtotal_checker(subtotal, money_list)
+    new_money_list = tax_tip_calculation(tax, tip, subtotal, money_list, evenly_split_tip, number_of_ppl)
+    print_out(new_money_list, people_list)
 
 
 if __name__ == "__main__":
