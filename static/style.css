@@ -1,0 +1,54 @@
+/* Color Variable Declaration */
+:root{
+--primary-color: #2853b5;
+--primary-color-hover: #1c3ea5;
+--success-color: #4CAF50;
+--sucess-color-hover: #45a049;
+--title-color: #000000;
+--background-color: wheat;
+}
+
+body{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+
+}
+.content{
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0 0.1);
+    text-align: center;
+
+    h1{
+        color: var(--title-color);
+    }
+
+    h3{
+        color: gray;
+    }
+
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+
+        th, td{
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        th{
+            background-color: white;
+            color: black;
+        }
+
+        tr:hover{
+            background-color: #c7c076;
+        }
+    }
+}

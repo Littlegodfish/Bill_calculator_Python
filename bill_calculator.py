@@ -24,7 +24,7 @@ def make_list(people_string):
     money_list = []
     for name in people_list:
            money_list.append(float(input("Initial Cost for " + name + " :")))
-    return money_list, people_list, len(money_list)
+    return money_list, people_list, len(people_list)
 
 def subtotal_checker(subtotal, money_list):
     if round(sum(money_list), 2) != round(subtotal, 2):
