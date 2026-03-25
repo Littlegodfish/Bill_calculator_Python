@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block head %}
-    <title>Bill Split Calculator</title>
+    <div class="header">
+        <input type="text" id="header-input" placeholder="Expense Title #1">
+        <p>E.g. McDonald's 3/14/2026</p>
+        <input type="submit" id="add_receipt_btn" value="Add Receipt">
+    </div>
 {% endblock %}
 
 {% block body %}

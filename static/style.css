@@ -5,27 +5,78 @@
 --success-color: #4CAF50;
 --sucess-color-hover: #45a049;
 --title-color: #000000;
---background-color: wheat;
+--background-color: white;
+}
+.header{
+    background-color: rgb(255, 204, 204);
+    border-radius: 5px;
+    border-color: black;
+    margin: 100px 140px 5px;
+    color: black;
+    padding: 25px;
+    text-align: left;
+    position: relative;
+    min-height: 60px;
+}
+#header-input {
+    max-width: 300px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border: none;
+    border-bottom: 2px solid black;
+    background: transparent;
+    font-size: 30px;
+    font-style: italic;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: black;
+    outline: none;
+    text-align: center;
+    width: 60%;
 }
 
+#add_receipt_btn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.header p {
+    position: absolute;
+    left: 60px;
+    top: 55%;
+    transform: translateY(-50%);
+    font-style: italic;
+    color: gray;
+    margin: 0;
+}
 body{
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
+    margin-right: 10px;
+    margin-left: 10px;
+    text-align: center;
     padding: 0;
     background-color: var(--background-color);
 
 }
 .content{
-    max-width: 800px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 20px;
-    background-color: white;
+    background-color: rgb(252, 236, 205);
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0 0.1);
     text-align: center;
 
     h1{
-        color: var(--title-color);
+        color: rgb(130, 75, 59);
+        margin-left: 10px;
     }
 
     h3{
@@ -45,10 +96,6 @@ body{
         th{
             background-color: white;
             color: black;
-        }
-
-        tr:hover{
-            background-color: #c7c076;
         }
     }
 }
