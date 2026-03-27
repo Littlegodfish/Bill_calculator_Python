@@ -2,19 +2,36 @@
 
 {% block head %}
     <div class="header">
-        <input type="text" id="header-input" placeholder="Expense Title #1">
-        <p>E.g. McDonald's 3/14/2026</p>
-        <input type="submit" id="add_receipt_btn" value="Add Receipt">
+        <h1>Split Bill Calculator</h1>
     </div>
 {% endblock %}
 
 {% block body %}
+    
     <div class ="content">
-        <h1>Individuals Cost Input</h1>
-
+        <div class="form-title">
+            <div class="form-name">
+                <input type="text" id="header-input" placeholder="Expense Title #1">
+                <p>E.g. McDonald's 3/14/2026</p>
+            </div>
+            <input type="submit" id="add_receipt_btn" value="Add Receipt">
+        </div>
+        <div class="form-list-input">
+            <div class="list-header">
+                <h1>Name</h1>
+                <h1>Cost</h1>
+            </div>
+            <div class="list-input">
+                <input type="text" id="name-input" >
+                <input type="number" id="cost-input" >
+            </div>
+        </div>
+        
         {% if tasks | length < 1 %}
         <h3>No People Added Yet</h3>
         {% else %}
+        
+
         <table>
             <tr>
                 <th>Task</th>
