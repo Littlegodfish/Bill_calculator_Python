@@ -21,16 +21,16 @@
                 <h1>Name</h1>
                 <h1>Cost</h1>
             </div>
-            <div class="list-input">
-                <input type="text" id="name-input" >
-                <input type="number" id="cost-input" >
+            <div class="list-input" id="list-input-row-0">
+                <input type="text" class="name-input">
+                <input type="number" class="cost-input">
             </div>
+            <button type="button" id="add-person-row"> Add Person</button>
         </div>
         
         {% if tasks | length < 1 %}
         <h3>No People Added Yet</h3>
         {% else %}
-        
 
         <table>
             <tr>
@@ -59,4 +59,34 @@
             <input type="submit" value="Add Person" id="btn_add">
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const listInputContainer = document.querySelector('.form-list-input');
+            const addRowBtn = document.getElementById('add-person-row');
+            let rowCounter = 1;
+
+            addRowBtn.addEventListener('click', function () {
+                const row = document.createElement('div');
+                row.className = 'list-input';
+                row.id = `list-input-row-${rowCounter++}`;
+
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.className = 'name-input';
+
+                const costInput = document.createElement('input');
+                costInput.type = 'number';
+                costInput.className = 'cost-input';
+                costInput.step = '0.01';
+                costInput.inputMode = 'decimal';
+
+                row.appendChild(nameInput);
+                row.appendChild(costInput);
+
+                // Insert row above the button, keep the button bottom-most
+                listInputContainer.insertBefore(row, addRowBtn);
+            });
+        });
+    </script>
 {% endblock %}

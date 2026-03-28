@@ -59,7 +59,7 @@ def edit(id:int):
     edit_task = MyTask.query.get_or_404(id)
     if request.method == "POST":
         edit_task.content = request.form['content']
-        edit_task.amount = float(request.form['amount'])
+        edit_task.amount = float(request.form['amount']) 
         try:
             db.session.commit()
             return redirect("/")
