@@ -18,12 +18,18 @@
         </div>
         <div class="form-list-input">
             <div class="list-header">
-                <h1>Name</h1>
-                <h1>Cost</h1>
+                <div class="header-fields">
+                    <h1>Name</h1>
+                    <h1>Cost</h1>
+                </div>
             </div>
             <div class="list-input" id="list-input-row-0">
-                <input type="text" class="name-input">
-                <input type="number" class="cost-input">
+                <span class="row-count">1</span>
+                <div class="row-fields">
+                    <input type="text" class="name-input">
+                    <input type="number" class="cost-input">
+                </div>
+                <button type="button" class="delete-row" aria-label="Delete row">✕</button>
             </div>
             <button type="button" id="add-person-row"> Add Person</button>
         </div>
@@ -55,7 +61,7 @@
         {% endif %}
         <form action="/" method="POST">
             <input type="text" name ="content" id="content" placeholder="Ex: Alexender">
-            <input type="number" name ="amount" id="amount" placeholder="Ex: 25.99" step="0.01">
+            <input type="number" name ="amount" id="amount" placeholder="Ex: 25.99">
             <input type="submit" value="Add Person" id="btn_add">
         </form>
     </div>
@@ -64,12 +70,36 @@
         document.addEventListener('DOMContentLoaded', function () {
             const listInputContainer = document.querySelector('.form-list-input');
             const addRowBtn = document.getElementById('add-person-row');
-            let rowCounter = 1;
+            let rowCounter = 2; // first row is 1
+
+            // Delegated listener for existing and future delete buttons
+            listInputContainer.addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-row')) {
+                    const toDelete = event.target.closest('.list-input');
+                    if (toDelete) {
+                        toDelete.remove();
+                        // Reindex after delete
+                        const rows = listInputContainer.querySelectorAll('.list-input');
+                        let index = 1;
+                        rows.forEach(row => {
+                            const countSpan = row.querySelector('.row-count');
+                            if (countSpan) {
+                                countSpan.textContent = index++;
+                            }
+                        });
+                        rowCounter = index;
+                    }
+                }
+            });
 
             addRowBtn.addEventListener('click', function () {
                 const row = document.createElement('div');
                 row.className = 'list-input';
-                row.id = `list-input-row-${rowCounter++}`;
+                row.id = `list-input-row-${rowCounter}`;
+
+                const countLabel = document.createElement('span');
+                countLabel.className = 'row-count';
+                countLabel.textContent = rowCounter;
 
                 const nameInput = document.createElement('input');
                 nameInput.type = 'text';
@@ -78,14 +108,31 @@
                 const costInput = document.createElement('input');
                 costInput.type = 'number';
                 costInput.className = 'cost-input';
-                costInput.step = '0.01';
                 costInput.inputMode = 'decimal';
 
-                row.appendChild(nameInput);
-                row.appendChild(costInput);
+                row.appendChild(countLabel);
+
+                const fields = document.createElement('div');
+                fields.className = 'row-fields';
+                fields.appendChild(nameInput);
+                fields.appendChild(costInput);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'delete-row';
+                deleteBtn.textContent = '✕';
+                deleteBtn.setAttribute('aria-label', 'Delete row');
+                deleteBtn.addEventListener('click', function () {
+                    row.remove();
+                });
+
+                row.appendChild(fields);
+                row.appendChild(deleteBtn);
 
                 // Insert row above the button, keep the button bottom-most
                 listInputContainer.insertBefore(row, addRowBtn);
+
+                rowCounter += 1;
             });
         });
     </script>
