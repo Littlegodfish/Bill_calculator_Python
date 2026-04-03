@@ -28,6 +28,7 @@ def make_list(people_string):
 
 def subtotal_checker(subtotal, money_list):
     if round(sum(money_list), 2) != round(subtotal, 2):
+        print(round(sum(money_list), 2))
         print("Warning: Sum of each person's cost does not match the subtotal")
 
 def tax_tip_calculation(tax, tip, subtotal, money_list, evenly_split_tip, number_of_ppl):

@@ -27,11 +27,26 @@
                 <span class="row-count">1</span>
                 <div class="row-fields">
                     <input type="text" class="name-input">
-                    <input type="number" class="cost-input">
+                    <input type="number" class="cost-input" min="0">
                 </div>
                 <button type="button" class="delete-row" aria-label="Delete row">✕</button>
             </div>
             <button type="button" id="add-person-row"> Add Person</button>
+        </div>
+
+        <div class="summary-input">
+            <div class="summary-row">
+                <h1>Subtotal</h1>
+                <input type="number" id="subtotal-input" class="summary-input-field" min="0">
+            </div>
+            <div class="summary-row">
+                <h1>Tax</h1>
+                <input type="number" id="tax-input" class="summary-input-field" min="0">
+            </div>
+            <div class="summary-row">
+                <h1>Tip</h1>
+                <input type="number" id="tip-input" class="summary-input-field" min="0">
+            </div>
         </div>
         
         {% if tasks | length < 1 %}

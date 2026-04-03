@@ -213,6 +213,43 @@ body{
     #add-person-row:hover {
     background: var(--primary-color-hover);
     }
+
+    .summary-input {
+        margin-top: 18px;
+        padding-top: 12px;
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: Center;
+    }
+
+    .summary-row {
+        display: grid;
+        grid-template-columns: 1fr 170px;
+        align-items: center;
+        gap: 420px;
+        margin-bottom: 10px;
+    }
+
+    .summary-row h1 {
+        font-size: 30px;
+        margin: 0;
+        font-weight: bold;
+        color: rgb(130, 75, 59);
+    }
+
+    .summary-input-field {
+        border: none;
+        background: transparent;
+        font-size: 24px;
+        border-bottom: 2px solid black;
+        padding: 4px 6px;
+        outline: none;
+        text-align: center;
+        width: 100%;
+        max-width: 160px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
     
     h1{
         color: rgb(130, 75, 59);
@@ -225,9 +262,9 @@ body{
     }
 
     table{
+        margin-top: 300px;
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
 
         th, td{
             padding: 10px;
