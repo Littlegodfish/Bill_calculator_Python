@@ -31,6 +31,14 @@
                 </div>
                 <button type="button" class="delete-row" aria-label="Delete row">✕</button>
             </div>
+            <div class="list-input" id="list-input-row-1">
+                <span class="row-count">2</span>
+                <div class="row-fields">
+                    <input type="text" class="name-input">
+                    <input type="number" class="cost-input" min="0">
+                </div>
+                <button type="button" class="delete-row" aria-label="Delete row">✕</button>
+            </div>
             <button type="button" id="add-person-row"> Add Person</button>
         </div>
 
@@ -85,7 +93,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const listInputContainer = document.querySelector('.form-list-input');
             const addRowBtn = document.getElementById('add-person-row');
-            let rowCounter = 2; // first row is 1
+            let rowCounter = 3; // next row after default 1 and 2
 
             // Delegated listener for existing and future delete buttons
             listInputContainer.addEventListener('click', function (event) {
