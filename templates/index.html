@@ -18,10 +18,8 @@
         </div>
         <div class="form-list-input">
             <div class="list-header">
-                <div class="header-fields">
-                    <h1>Name</h1>
-                    <h1>Cost</h1>
-                </div>
+                <h1>Name</h1>
+                <h1>Cost</h1>
             </div>
             <div class="list-input" id="list-input-row-0">
                 <span class="row-count">1</span>
@@ -57,6 +55,30 @@
             </div>
         </div>
         
+        <div class="form-list-input">
+            <div class="list-header">
+                <h1>Bill Split</h1>
+                <h1>Cost</h1>
+            </div>
+            <div class="list-input" id="list-input-row-0">
+                <span class="row-count">1</span>
+                <div class="row-fields">
+                    <input type="text" class="name-input">
+                    <input type="number" class="cost-input" min="0">
+                </div>
+                <button type="button" class="delete-row" aria-label="Delete row">✕</button>
+            </div>
+            <div class="list-input" id="list-input-row-1">
+                <span class="row-count">2</span>
+                <div class="row-fields">
+                    <input type="text" class="name-input">
+                    <input type="number" class="cost-input" min="0">
+                </div>
+                <button type="button" class="delete-row" aria-label="Delete row">✕</button>
+            </div>
+            <button type="button" id="add-person-row"> Add Person</button>
+        </div>
+
         {% if tasks | length < 1 %}
         <h3>No People Added Yet</h3>
         {% else %}
