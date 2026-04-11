@@ -303,3 +303,26 @@ body{
         height: 20px;
         cursor: pointer;
     }
+
+    .calculate-button-row {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        width: calc(100% + 160px);
+        margin-left: -160px;
+    }
+
+    #calculate-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 18px;
+        width: 180px;
+    }
+
+    #calculate-btn:hover {
+        background: var(--primary-color-hover);
+    }
