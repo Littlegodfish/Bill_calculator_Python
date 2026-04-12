@@ -64,60 +64,15 @@
             </div>
         </div>
         
-        <div class="form-list-input">
+        <div class="form-list-output" id="form-list-output" style="display:none;">
             <div class="list-header">
-                <h1>Bill Split</h1>
+                <h1>Name</h1>
                 <h1>Amount</h1>
             </div>
-            <div class="list-input" id="list-input-row-0">
-                <span class="row-count">1</span>
-                <div class="row-fields">
-                    <input type="text" class="name-input">
-                    <input type="number" class="cost-input" min="0">
-                </div>
-                <button type="button" class="delete-row" aria-label="Delete row">✕</button>
+            <div class="list-output-rows" id="list-output-rows">
+                <!-- Output rows are generated after Calculate is clicked -->
             </div>
-            <div class="list-input" id="list-input-row-1">
-                <span class="row-count">2</span>
-                <div class="row-fields">
-                    <input type="text" class="name-input">
-                    <input type="number" class="cost-input" min="0">
-                </div>
-                <button type="button" class="delete-row" aria-label="Delete row">✕</button>
-            </div>
-            <button type="button" id="add-person-row"> Add Person</button>
         </div>
-
-        {% if tasks | length < 1 %}
-        <h3>No People Added Yet</h3>
-        {% else %}
-
-        <table>
-            <tr>
-                <th>Task</th>
-                <th>Amount</th>
-                <th>Added</th>
-                <th>Actions</th>
-            </tr>
-            {% for task in tasks %}
-                <tr>
-                    <td>{{task.content}}</td>
-                    <td>{{task.amount}}</td>
-                    <td>{{task.created.strftime("%Y-%m-%d ")}}</td>
-                    <td>
-                        <a href="/delete/{{task.id}}">Delete</a>
-                        <br/>
-                        <a href="/edit/{{task.id}}">Edit</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        {% endif %}
-        <form action="/" method="POST">
-            <input type="text" name ="content" id="content" placeholder="Ex: Alexender">
-            <input type="number" name ="amount" id="amount" placeholder="Ex: 25.99">
-            <input type="submit" value="Add Person" id="btn_add">
-        </form>
     </div>
 
     <script>
@@ -187,6 +142,88 @@
                 listInputContainer.insertBefore(row, addRowBtn);
 
                 rowCounter += 1;
+            });
+
+            const calculateBtn = document.getElementById('calculate-btn');
+            const formListOutput = document.getElementById('form-list-output');
+            const listOutputRows = document.getElementById('list-output-rows');
+            const subtotalInput = document.getElementById('subtotal-input');
+            const taxInput = document.getElementById('tax-input');
+            const tipInput = document.getElementById('tip-input');
+            const splitTipCheckbox = document.getElementById('split-tip-checkbox');
+
+            function createOutputRow(index, name, amount) {
+                const row = document.createElement('div');
+                row.className = 'list-output';
+                row.id = `list-output-row-${index}`;
+
+                const countLabel = document.createElement('span');
+                countLabel.className = 'row-count';
+                countLabel.textContent = index;
+
+                const fields = document.createElement('div');
+                fields.className = 'row-fields';
+
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.className = 'name-input';
+                nameInput.value = name;
+                nameInput.readOnly = true;
+
+                const costInput = document.createElement('input');
+                costInput.type = 'number';
+                costInput.className = 'cost-input';
+                costInput.min = '0';
+                costInput.value = amount.toFixed(2);
+                costInput.readOnly = true;
+
+                fields.appendChild(nameInput);
+                fields.appendChild(costInput);
+                row.appendChild(countLabel);
+                row.appendChild(fields);
+                return row;
+            }
+
+            function updateOutputRows() {
+                const inputRows = listInputContainer.querySelectorAll('.list-input');
+                const people = [];
+                const costs = [];
+
+                inputRows.forEach(row => {
+                    const nameInput = row.querySelector('.name-input');
+                    const costInput = row.querySelector('.cost-input');
+                    const name = nameInput ? nameInput.value.trim() : '';
+                    const cost = costInput ? Number(costInput.value) || 0 : 0;
+                    people.push(name);
+                    costs.push(cost);
+                });
+
+                const subtotal = Number(subtotalInput.value) || 0;
+                const tax = Number(taxInput.value) || 0;
+                const tip = Number(tipInput.value) || 0;
+                const taxPercentage = subtotal > 0 ? tax / subtotal : 0;
+                const tipPercentage = subtotal > 0 ? tip / subtotal : 0;
+                const splitTip = splitTipCheckbox.checked;
+                const peopleCount = people.length;
+                const evenTip = peopleCount > 0 ? tip / peopleCount : 0;
+
+                listOutputRows.innerHTML = '';
+                people.forEach((name, idx) => {
+                    let amount = costs[idx] + costs[idx] * taxPercentage;
+                    amount += splitTip ? evenTip : costs[idx] * tipPercentage;
+                    listOutputRows.appendChild(createOutputRow(idx + 1, name, amount));
+                });
+            }
+
+            calculateBtn.addEventListener('click', function () {
+                const inputRows = listInputContainer.querySelectorAll('.list-input');
+                if (inputRows.length === 0) {
+                    formListOutput.style.display = 'none';
+                    return;
+                }
+
+                updateOutputRows();
+                formListOutput.style.display = 'block';
             });
         });
     </script>
