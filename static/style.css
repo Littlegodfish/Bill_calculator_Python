@@ -3,35 +3,26 @@
 :root{
 --primary-color: #2853b5;
 --primary-color-hover: #557beb;
---success-color: #4CAF50;
---sucess-color-hover: #45a049;
---title-color: #000000;
---background-color: white;
+--title-color: rgb(130, 75, 59);
+--background-color: rgb(255, 255, 255);
+--form-background-color: rgb(252, 236, 205);
+--font-primary: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+--font-secondary:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 /* Page Header */
-.header{
-    background-color: rgb(255, 255, 255);
-    border-radius: 5px;
-    border-color: black;
-    margin: 20px 140px 20px;
-    color: black;
-    padding: 25px;
+.page-header{
+    background-color: var(--background-color);
+    color: var(--title-color);
+    padding: 5px 0;
     text-align: center;
-    position: relative;
-    min-height: 60px;
-}
-
-.header h1{
-    margin: 0;
-    color: rgb(130, 75, 59);
-    font-size: 50px;
-    font-family: "Gill Sans";
+    font-size: 30px;
+    font-family: var(--font-primary);
     font-weight: bold;
 }
 
 /* Body Styling */
 body{
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-secondary);
     margin: 0px 20px;
     text-align: center;
     padding: 0;
@@ -45,7 +36,7 @@ body{
     max-width: 1100px;
     margin: 0 auto;
     padding: 20px;
-    background-color: rgb(252, 236, 205);
+    background-color: var(--form-background-color);
     border-radius: 10px;
     border: 2px solid #000;
     box-shadow: 0 2px 5px rgba(0,0,0 0.1);
@@ -139,11 +130,14 @@ body{
         display: grid;
         grid-template-columns: 10% 90%;
         align-items: center;
-        width: 100%;
-        padding: 8px 16px;
+        width: 80%;
+        padding: 8px 8x;
         border-top: none;
         border-bottom: none;
+        
+        
     }
+   
 
     .list-output .row-fields {
         display: grid;
