@@ -67,10 +67,17 @@
         <div class="form-list-output" id="form-list-output" style="display:none;">
             <div class="list-header">
                 <h1>Name</h1>
-                <h1>Amount</h1>
+                <h1 style="margin-left: 100px;">Amount</h1>
             </div>
             <div class="list-output-rows" id="list-output-rows">
                 <!-- Output rows are generated after Calculate is clicked -->
+            </div>
+            <div class="list-output grand-total-row" id="grand-total-row">
+                <span class="row-count"></span>
+                <div class="row-fields">
+                    <h1 style="margin-left: -200px;">Grand Total</h1>
+                    <input type="number" class="cost-input" id="grand-total-value" min="0" readonly>
+                </div>
             </div>
         </div>
     </div>
@@ -184,35 +191,15 @@
                 return row;
             }
 
-            function updateOutputRows() {
-                const inputRows = listInputContainer.querySelectorAll('.list-input');
-                const people = [];
-                const costs = [];
-
-                inputRows.forEach(row => {
-                    const nameInput = row.querySelector('.name-input');
-                    const costInput = row.querySelector('.cost-input');
-                    const name = nameInput ? nameInput.value.trim() : '';
-                    const cost = costInput ? Number(costInput.value) || 0 : 0;
-                    people.push(name);
-                    costs.push(cost);
-                });
-
-                const subtotal = Number(subtotalInput.value) || 0;
-                const tax = Number(taxInput.value) || 0;
-                const tip = Number(tipInput.value) || 0;
-                const taxPercentage = subtotal > 0 ? tax / subtotal : 0;
-                const tipPercentage = subtotal > 0 ? tip / subtotal : 0;
-                const splitTip = splitTipCheckbox.checked;
-                const peopleCount = people.length;
-                const evenTip = peopleCount > 0 ? tip / peopleCount : 0;
-
+            function updateOutputRows(breakdown, people) {
                 listOutputRows.innerHTML = '';
+                let grandTotal = 0;
                 people.forEach((name, idx) => {
-                    let amount = costs[idx] + costs[idx] * taxPercentage;
-                    amount += splitTip ? evenTip : costs[idx] * tipPercentage;
+                    const amount = breakdown[name];
+                    grandTotal += amount;
                     listOutputRows.appendChild(createOutputRow(idx + 1, name, amount));
                 });
+                document.getElementById('grand-total-value').value = grandTotal.toFixed(2);
             }
 
             calculateBtn.addEventListener('click', function () {
@@ -222,8 +209,35 @@
                     return;
                 }
 
-                updateOutputRows();
-                formListOutput.style.display = 'block';
+                const people = [];
+                const costs = [];
+                inputRows.forEach(row => {
+                    const nameInput = row.querySelector('.name-input');
+                    const costInput = row.querySelector('.cost-input');
+                    people.push(nameInput ? nameInput.value.trim() : '');
+                    costs.push(costInput ? Number(costInput.value) || 0 : 0);
+                });
+
+                const payload = {
+                    people: people,
+                    costs: costs,
+                    subtotal: Number(subtotalInput.value) || 0,
+                    tax: Number(taxInput.value) || 0,
+                    tip: Number(tipInput.value) || 0,
+                    evenly_split_tip: splitTipCheckbox.checked
+                };
+
+                fetch('/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => response.json())
+                .then(breakdown => {
+                    updateOutputRows(breakdown, people);
+                    formListOutput.style.display = 'block';
+                })
+                .catch(err => console.error('Calculation error:', err));
             });
         });
     </script>
