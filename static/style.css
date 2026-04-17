@@ -1,8 +1,8 @@
 /* chrome://net-internals/#sockets */
 /* Color Variable Declaration */
 :root{
---primary-color: #2853b5;
---primary-color-hover: #557beb;
+--primary-button-color: #2853b5;
+--primary-button-color-hover: #557beb;
 --title-color: rgb(130, 75, 59);
 --background-color: rgb(255, 255, 255);
 --form-background-color: rgb(252, 236, 205);
@@ -22,13 +22,8 @@
 
 /* Body Styling */
 body{
-    font-family: var(--font-secondary);
-    margin: 0px 20px;
-    text-align: center;
-    padding: 0;
-    
+    margin-bottom: 50px;
     background-color: var(--background-color);
-
 }
 
 /* Main Content Area */ 
@@ -39,66 +34,66 @@ body{
     background-color: var(--form-background-color);
     border-radius: 10px;
     border: 2px solid #000;
-    box-shadow: 0 2px 5px rgba(0,0,0 0.1);
     text-align: center;
 }
 
-/* Form Title and Add Receipt Button */
+/* Form Title & Add Receipt Button */
 .form-title {
-    margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    position: relative;
-}
+    margin-bottom: 15px;
 
-.form-name {
-    text-align: left;
-    margin-bottom: 10px;
-    margin-left: 5px;
-    flex: 1;
-    
-}
+    .form-name {
+        flex: 1;
+        margin: 0 0 10px 5px;
+        
+    }
 
-#header-input {
-    max-width: 300px;
-    border: none;
-    border-bottom: 2px solid black;
-    background: transparent;
-    font-size: 30px;
-    font-style: italic;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: black;
-    outline: none;
-    text-align: center;
-    width: 60%;
-    display: block;
-    margin-bottom: 2px;
-}
+    /* Input */
+    .header-input {
+        display: block;
+        width: 70%;
+        max-width: 300px;
 
-.form-name p {
-    font-style: italic;
-    color: gray;
-    margin: 0;
-    margin-left: 65px;
-    text-align: left;
-    font-size: 14px;
-}
+        border: none;
+        border-bottom: 2px solid black;
+        background: transparent;
+        outline: none;
 
-#add_receipt_btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    margin-top: 60px;
-    margin-right: 98px;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    align-self: flex-end;
-}
-#add_receipt_btn:hover {
-    background: var(--primary-color-hover);
+        color: var(--color-primary);
+        font-family: var(--font-secondary);
+        font-size: 2rem;
+        font-style: italic;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .form-hint {
+        margin: 2px 0 0 -585px;
+        color: var(--color-primary);
+        font-size: 14px;
+        font-style: italic;
+        font-family: var(--font-secondary);
+    }
+
+    .btn-primary {
+        align-self: flex-end;
+        margin-top: 50px;
+        margin-right: 98px;
+        padding: 8px 16px;
+
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+        background-color: var(--primary-button-color);
+        color: white;
+        font-size: 16px;
+    }
+    .btn-primary:hover {
+        background-color: var(--primary-button-color-hover);
+    }
 }
 /* User Input Table */
     .form-list-input {
@@ -106,7 +101,7 @@ body{
         overflow: hidden;
         max-width: 900px;
         margin: 0 auto;
-        margin-top: 24px;
+        margin-top: 14px;
     }
 
     .form-list-output {
@@ -214,7 +209,7 @@ body{
     }
 
     #add-person-row {
-    background-color: var(--primary-color);
+    background-color: var(--primary-button-color);
     color: white;
     border: none;
     margin: 10px 0px 15px 740px;
@@ -226,7 +221,7 @@ body{
     }
 
     #add-person-row:hover {
-    background: var(--primary-color-hover);
+    background: var(--primary-button-color-hover);
     }
 
     .summary-input {
@@ -293,6 +288,7 @@ body{
 
     .split-tip-label {
         font-size: 12px;
+        font-family: var(--font-secondary);
         color: rgb(130, 75, 59);
         font-weight: bold;
         margin: 0;
@@ -313,7 +309,7 @@ body{
     }
 
     #calculate-btn {
-        background-color: var(--primary-color);
+        background-color: var(--primary-button-color);
         color: white;
         border: none;
         padding: 10px 24px;
@@ -324,5 +320,5 @@ body{
     }
 
     #calculate-btn:hover {
-        background: var(--primary-color-hover);
+        background: var(--primary-button-color-hover);
     }
