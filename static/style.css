@@ -95,13 +95,38 @@ body{
         background-color: var(--primary-button-color-hover);
     }
 }
+
 /* User Input Table */
-    .form-list-input {
+.form-list-input {
         border: 3px solid #000;
         overflow: hidden;
         max-width: 900px;
-        margin: 0 auto;
-        margin-top: 14px;
+        margin: 14px auto 14px;
+
+    .list-header {
+        display: grid;
+        grid-template-columns: 45% 65%;
+        align-items: center;
+        width: 100%;
+        border-bottom: 3px solid #000;
+        color: var(--title-color);
+        font-family: var(--font-primary);
+        font-weight: bold;
+        font-size: 17px;
+    }
+    .list-input {
+        display: grid;
+        grid-template-columns: 10% 80% 20%;
+        padding: 8px 16px;
+    }
+
+    .row-count {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--title-color);
+        font-family: var(--font-primary);
+        margin: 0;
     }
 
     .form-list-output {
@@ -109,16 +134,6 @@ body{
         overflow: hidden;
         max-width: 900px;
         margin: 12px auto 12px;
-    }
-    
-    .list-header {
-        display: grid;
-        grid-template-columns: 40% 70%;
-        align-items: center;
-        width: 100%;
-        border-bottom: 3px solid #000;
-        padding: 0px 0px;
-        gap: 0px;
     }
     
     .list-output {
@@ -158,15 +173,6 @@ body{
         align-items: center;
         width: 90%;
         gap: 52px;
-    }
-
-    .row-count {
-        text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-        color: rgb(130, 75, 59);
-        font-family: 'Gill Sans', sans-serif;
-        margin: 0;
     }
 
     .delete-row {
@@ -223,7 +229,7 @@ body{
     #add-person-row:hover {
     background: var(--primary-button-color-hover);
     }
-
+}
     .summary-input {
         margin-top: 18px;
         padding-top: 12px;
@@ -260,16 +266,6 @@ body{
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-style: italic;
         font-weight: bold;
-    }
-    
-    h1{
-        color: rgb(130, 75, 59);
-        font-family: "Gill Sans";
-        font-weight: bold;
-    }
-
-    h3{
-        color: gray;
     }
 
     .tip-row-container {
