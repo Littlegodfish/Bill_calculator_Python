@@ -117,7 +117,7 @@ body{
     .list-input {
         display: grid;
         grid-template-columns: 10% 80% 20%;
-        padding: 8px 16px;
+        padding: 9px 16px;
     }
 
     .row-count {
@@ -127,6 +127,14 @@ body{
         color: var(--title-color);
         font-family: var(--font-primary);
         margin: 0;
+    }
+
+    .row-fields {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        align-items: center;
+        width: 90%;
+        gap: 52px;
     }
 
     .form-list-output {
@@ -144,8 +152,6 @@ body{
         padding: 8px 8x;
         border-top: none;
         border-bottom: none;
-        
-        
     }
    
 
@@ -165,14 +171,6 @@ body{
         border-top: none;
         border-bottom: none;
         padding: 8px 16px;
-    }
-
-    .row-fields {
-        display: grid;
-        grid-template-columns: 50% 50%;
-        align-items: center;
-        width: 90%;
-        gap: 52px;
     }
 
     .delete-row {
