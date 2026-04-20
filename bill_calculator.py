@@ -1,14 +1,3 @@
-# Required Input:
-# 1) Number of ppl 2) Cost for each 3) Subtotal 4) Tax 5) Tip 6) Grand total 
-
-# Calculation 
-# 1) Tax/ Subtotal to get Tax percentage 2) Tip/Subtotal w/o tax to get Tip percentage 
-# 3) Each person's cost + Tax and Tip percentage
-
-# Output 
-# 1) Each person's final cost 
-
-# Target: separate eahc funciton into blocks instead of main 
 
 def collect_input():
     people_string = input("Everyone's names separated by space: ")
