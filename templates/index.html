@@ -14,30 +14,30 @@
                 <input type="text" class="header-input" placeholder="Expense Title #1">
                 <p class="form-hint">E.g. KFC 3/21/2025</p>
             </div>
-        <button class="btn-primary">Add Receipt</button>
+            <button class="btn-primary">Add Receipt</button>
         </div>
 
         <div class="form-list-input">
+            
             <div class="list-header">
                 <h1>Name</h1>
                 <h1>Cost</h1>
             </div>
+
             <div class="list-input" id="list-input-row-0">
                 <span class="row-count">1</span>
-                <div class="row-fields">
-                    <input type="text" class="name-input">
-                    <input type="number" class="cost-input" min="0">
-                </div>
+                <input type="text" class="name-input">
+                <input type="number" class="cost-input" min="0">
                 <button type="button" class="delete-row" aria-label="Delete row">✕</button>
             </div>
+
             <div class="list-input" id="list-input-row-1">
                 <span class="row-count">2</span>
-                <div class="row-fields">
-                    <input type="text" class="name-input">
-                    <input type="number" class="cost-input" min="0">
-                </div>
+                <input type="text" class="name-input">
+                <input type="number" class="cost-input" min="0">
                 <button type="button" class="delete-row" aria-label="Delete row">✕</button>
             </div>
+
             <button type="button" id="add-person-row"> Add Person</button>
         </div>
 
@@ -137,13 +137,6 @@
                 costInput.className = 'cost-input';
                 costInput.inputMode = 'decimal';
 
-                row.appendChild(countLabel);
-
-                const fields = document.createElement('div');
-                fields.className = 'row-fields';
-                fields.appendChild(nameInput);
-                fields.appendChild(costInput);
-
                 const deleteBtn = document.createElement('button');
                 deleteBtn.type = 'button';
                 deleteBtn.className = 'delete-row';
@@ -153,7 +146,9 @@
                     row.remove();
                 });
 
-                row.appendChild(fields);
+                row.appendChild(countLabel);
+                row.appendChild(nameInput);
+                row.appendChild(costInput);
                 row.appendChild(deleteBtn);
 
                 // Insert row above the button, keep the button bottom-most
