@@ -41,29 +41,36 @@
             <button type="button" id="add-person-row"> Add Person</button>
         </div>
 
-        <div class="summary-input">
+        <div class="summary-form">
+
             <div class="summary-row">
-                <h1>Subtotal</h1>
-                <input type="number" id="subtotal-input" class="summary-input-field" min="0">
+                <label class="summary-label">Subtotal</label>
+                <input type="number" class="summary-input" min="0">
             </div>
+
             <div class="summary-row">
-                <h1>Tax</h1>
-                <input type="number" id="tax-input" class="summary-input-field" min="0">
+                <label class="summary-label">Tax</label>
+                <input type="number" class="summary-input" min="0">
             </div>
+
             <div class="summary-row">
-                <h1>Tip</h1>
+                <label class="summary-label">Tip</label>
+
                 <div class="tip-row-container">
-                    <input type="number" id="tip-input" class="summary-input-field" min="0">
-                    <div class="tip-checkbox-wrapper">
-                        <label for="split-tip-checkbox" class="split-tip-label">split tip evenly?</label>
+                    <input type="number" id="tip-input" class="summary-input" min="0">
+
+                    <label for="split-tip-checkbox" class="tip-checkbox-wrapper">
+                        <span class="split-tip-label">Split tip<br>evenly?</span>
                         <input type="checkbox" id="split-tip-checkbox" class="split-tip-checkbox">
-                    </div>
+                    </label>
                 </div>
             </div>
+
             <div class="calculate-button-row">
                 <button type="button" id="calculate-btn">Calculate</button>
             </div>
         </div>
+        
         
         <div class="form-list-output" id="form-list-output" style="display:none;">
             <div class="list-header">
