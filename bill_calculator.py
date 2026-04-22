@@ -5,7 +5,7 @@ def collect_input():
     tax = float(input("Tax Amount: "))
     tip = float(input("Tip Amount: "))
     choice = input("Split Tip evenly? (y/n): ")
-    evenly_split_tip = choice.lower() == "y" #Boolean
+    evenly_split_tip = choice.lower() == "y" 
     return people_string, subtotal, tax, tip, evenly_split_tip
 
 def make_list(people_string):
