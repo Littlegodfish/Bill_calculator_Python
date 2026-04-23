@@ -45,12 +45,12 @@
 
             <div class="summary-row">
                 <label class="summary-label">Subtotal</label>
-                <input type="number" class="summary-input" min="0">
+                <input type="number" id="subtotal-input" class="summary-input" min="0">
             </div>
 
             <div class="summary-row">
                 <label class="summary-label">Tax</label>
-                <input type="number" class="summary-input" min="0">
+                <input type="number" id="tax-input" class="summary-input" min="0">
             </div>
 
             <div class="summary-row">
@@ -72,18 +72,18 @@
         </div>
         
         
-        <div class="form-list-output" id="form-list-output" style="display:none;">
+        <div class="form-list-output is-hidden" id="form-list-output">
             <div class="list-header">
                 <h1>Name</h1>
-                <h1 style="margin-left: 100px;">Amount</h1>
+                <h1>Amount</h1>
             </div>
-            <div class="list-output-rows" id="list-output-rows">
-                <!-- Output rows are generated after Calculate is clicked -->
-            </div>
+
+            <div class="list-output-rows" id="list-output-rows"></div>
+
             <div class="list-output grand-total-row" id="grand-total-row">
                 <span class="row-count"></span>
                 <div class="row-fields">
-                    <h1 style="margin-left: -200px;">Grand Total</h1>
+                    <span class="grand-total-label">Grand Total</span>
                     <input type="number" class="cost-input" id="grand-total-value" min="0" readonly>
                 </div>
             </div>
@@ -95,163 +95,152 @@
 
     
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const headerInput = document.querySelector('.header-input');
-            const formHint = document.querySelector('.form-hint');
-            headerInput.addEventListener('input', function () {
-                formHint.style.display = headerInput.value.length > 0 ? 'none' : '';
-            });
+        document.addEventListener("DOMContentLoaded", () => {
+            const elements = {
+                headerInput: document.querySelector(".header-input"),
+                formHint: document.querySelector(".form-hint"),
+                listInputContainer: document.querySelector(".form-list-input"),
+                addRowBtn: document.getElementById("add-person-row"),
+                calculateBtn: document.getElementById("calculate-btn"),
+                formListOutput: document.getElementById("form-list-output"),
+                listOutputRows: document.getElementById("list-output-rows"),
+                grandTotalValue: document.getElementById("grand-total-value"),
+                subtotalInput: document.getElementById("subtotal-input"),
+                taxInput: document.getElementById("tax-input"),
+                tipInput: document.getElementById("tip-input"),
+                splitTipCheckbox: document.getElementById("split-tip-checkbox")
+            };
 
-            const listInputContainer = document.querySelector('.form-list-input');
-            const addRowBtn = document.getElementById('add-person-row');
-            let rowCounter = 3; // next row after default 1 and 2
+            let rowCounter = 3;
 
-            // Delegated listener for existing and future delete buttons
-            listInputContainer.addEventListener('click', function (event) {
-                if (event.target.classList.contains('delete-row')) {
-                    const toDelete = event.target.closest('.list-input');
-                    if (toDelete) {
-                        toDelete.remove();
-                        // Reindex after delete
-                        const rows = listInputContainer.querySelectorAll('.list-input');
-                        let index = 1;
-                        rows.forEach(row => {
-                            const countSpan = row.querySelector('.row-count');
-                            if (countSpan) {
-                                countSpan.textContent = index++;
-                            }
-                        });
-                        rowCounter = index;
+            function toggleHint() {
+                elements.formHint.style.display =
+                    elements.headerInput.value.length > 0 ? "none" : "";
+            }
+
+            function reindexRows() {
+                const rows = elements.listInputContainer.querySelectorAll(".list-input");
+                rows.forEach((row, index) => {
+                    const countSpan = row.querySelector(".row-count");
+                    if (countSpan) {
+                        countSpan.textContent = index + 1;
+                    }
+                });
+                rowCounter = rows.length + 1;
+            }
+
+            function createInputRow(index) {
+                const row = document.createElement("div");
+                row.className = "list-input";
+                row.id = `list-input-row-${index}`;
+
+                row.innerHTML = `
+                    <span class="row-count">${index}</span>
+                    <input type="text" class="name-input">
+                    <input type="number" class="cost-input" inputmode="decimal">
+                    <button type="button" class="delete-row" aria-label="Delete row">✕</button>
+                `;
+
+                return row;
+            }
+
+            function createOutputRow(index, name, amount) {
+                const row = document.createElement("div");
+                row.className = "list-output";
+                row.id = `list-output-row-${index}`;
+
+                row.innerHTML = `
+                    <span class="row-count">${index}</span>
+                    <div class="row-fields">
+                        <input type="text" class="name-input" value="${name}" readonly>
+                        <input type="number" class="cost-input" value="${amount.toFixed(2)}" readonly>
+                    </div>
+                `;
+
+                return row;
+            }
+
+            function getInputData() {
+                const rows = elements.listInputContainer.querySelectorAll(".list-input");
+                const people = [];
+                const costs = [];
+
+                rows.forEach(row => {
+                    const name = row.querySelector(".name-input")?.value.trim() || "";
+                    const cost = Number(row.querySelector(".cost-input")?.value) || 0;
+                    people.push(name);
+                    costs.push(cost);
+                });
+
+                return { people, costs };
+            }
+
+            function updateOutputRows(breakdown, people) {
+                elements.listOutputRows.innerHTML = "";
+                let grandTotal = 0;
+
+                people.forEach((name, index) => {
+                    const amount = breakdown[name] || 0;
+                    grandTotal += amount;
+                    elements.listOutputRows.appendChild(
+                        createOutputRow(index + 1, name, amount)
+                    );
+                });
+
+                elements.grandTotalValue.value = grandTotal.toFixed(2);
+                elements.formListOutput.classList.remove("is-hidden");
+            }
+
+            async function handleCalculate() {
+                const { people, costs } = getInputData();
+
+                if (people.length === 0) {
+                    elements.formListOutput.classList.add("is-hidden");
+                    return;
+                }
+
+                const payload = {
+                    people,
+                    costs,
+                    subtotal: Number(elements.subtotalInput.value) || 0,
+                    tax: Number(elements.taxInput.value) || 0,
+                    tip: Number(elements.tipInput.value) || 0,
+                    evenly_split_tip: elements.splitTipCheckbox.checked
+                };
+
+                try {
+                    const response = await fetch("/calculate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const breakdown = await response.json();
+                    updateOutputRows(breakdown, people);
+                } catch (error) {
+                    console.error("Calculation error:", error);
+                }
+            }
+
+            elements.headerInput.addEventListener("input", toggleHint);
+
+            elements.listInputContainer.addEventListener("click", event => {
+                if (event.target.classList.contains("delete-row")) {
+                    const row = event.target.closest(".list-input");
+                    if (row) {
+                        row.remove();
+                        reindexRows();
                     }
                 }
             });
 
-            addRowBtn.addEventListener('click', function () {
-                const row = document.createElement('div');
-                row.className = 'list-input';
-                row.id = `list-input-row-${rowCounter}`;
-
-                const countLabel = document.createElement('span');
-                countLabel.className = 'row-count';
-                countLabel.textContent = rowCounter;
-
-                const nameInput = document.createElement('input');
-                nameInput.type = 'text';
-                nameInput.className = 'name-input';
-
-                const costInput = document.createElement('input');
-                costInput.type = 'number';
-                costInput.className = 'cost-input';
-                costInput.inputMode = 'decimal';
-
-                const deleteBtn = document.createElement('button');
-                deleteBtn.type = 'button';
-                deleteBtn.className = 'delete-row';
-                deleteBtn.textContent = '✕';
-                deleteBtn.setAttribute('aria-label', 'Delete row');
-                deleteBtn.addEventListener('click', function () {
-                    row.remove();
-                });
-
-                row.appendChild(countLabel);
-                row.appendChild(nameInput);
-                row.appendChild(costInput);
-                row.appendChild(deleteBtn);
-
-                // Insert row above the button, keep the button bottom-most
-                listInputContainer.insertBefore(row, addRowBtn);
-
-                rowCounter += 1;
+            elements.addRowBtn.addEventListener("click", () => {
+                const row = createInputRow(rowCounter);
+                elements.listInputContainer.insertBefore(row, elements.addRowBtn);
+                reindexRows();
             });
 
-            const calculateBtn = document.getElementById('calculate-btn');
-            const formListOutput = document.getElementById('form-list-output');
-            const listOutputRows = document.getElementById('list-output-rows');
-            const subtotalInput = document.getElementById('subtotal-input');
-            const taxInput = document.getElementById('tax-input');
-            const tipInput = document.getElementById('tip-input');
-            const splitTipCheckbox = document.getElementById('split-tip-checkbox');
-
-            function createOutputRow(index, name, amount) {
-                const row = document.createElement('div');
-                row.className = 'list-output';
-                row.id = `list-output-row-${index}`;
-
-                const countLabel = document.createElement('span');
-                countLabel.className = 'row-count';
-                countLabel.textContent = index;
-
-                const fields = document.createElement('div');
-                fields.className = 'row-fields';
-
-                const nameInput = document.createElement('input');
-                nameInput.type = 'text';
-                nameInput.className = 'name-input';
-                nameInput.value = name;
-                nameInput.readOnly = true;
-
-                const costInput = document.createElement('input');
-                costInput.type = 'number';
-                costInput.className = 'cost-input';
-                costInput.min = '0';
-                costInput.value = amount.toFixed(2);
-                costInput.readOnly = true;
-
-                fields.appendChild(nameInput);
-                fields.appendChild(costInput);
-                row.appendChild(countLabel);
-                row.appendChild(fields);
-                return row;
-            }
-
-            function updateOutputRows(breakdown, people) {
-                listOutputRows.innerHTML = '';
-                let grandTotal = 0;
-                people.forEach((name, idx) => {
-                    const amount = breakdown[name];
-                    grandTotal += amount;
-                    listOutputRows.appendChild(createOutputRow(idx + 1, name, amount));
-                });
-                document.getElementById('grand-total-value').value = grandTotal.toFixed(2);
-            }
-
-            calculateBtn.addEventListener('click', function () {
-                const inputRows = listInputContainer.querySelectorAll('.list-input');
-                if (inputRows.length === 0) {
-                    formListOutput.style.display = 'none';
-                    return;
-                }
-
-                const people = [];
-                const costs = [];
-                inputRows.forEach(row => {
-                    const nameInput = row.querySelector('.name-input');
-                    const costInput = row.querySelector('.cost-input');
-                    people.push(nameInput ? nameInput.value.trim() : '');
-                    costs.push(costInput ? Number(costInput.value) || 0 : 0);
-                });
-
-                const payload = {
-                    people: people,
-                    costs: costs,
-                    subtotal: Number(subtotalInput.value) || 0,
-                    tax: Number(taxInput.value) || 0,
-                    tip: Number(tipInput.value) || 0,
-                    evenly_split_tip: splitTipCheckbox.checked
-                };
-
-                fetch('/calculate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                })
-                .then(response => response.json())
-                .then(breakdown => {
-                    updateOutputRows(breakdown, people);
-                    formListOutput.style.display = 'block';
-                })
-                .catch(err => console.error('Calculation error:', err));
-            });
+            elements.calculateBtn.addEventListener("click", handleCalculate);
         });
     </script>
 {% endblock %}
