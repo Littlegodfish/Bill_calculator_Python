@@ -73,21 +73,24 @@
         
         
         <div class="form-list-output is-hidden" id="form-list-output">
+            
             <div class="list-header">
                 <h1>Name</h1>
                 <h1>Amount</h1>
             </div>
 
-            <div class="list-output-rows" id="list-output-rows"></div>
+            <div class="list-output" id="list-output-row-0">
+                <span class="row-count">1</span>
+                <output type="text" class="name-output"></output>
+                <output type="number" class="amount-output" min="0"></output>
+            </div>
 
-            <div class="list-output grand-total-row" id="grand-total-row">
-                <span class="row-count"></span>
-                <div class="row-fields">
-                    <span class="grand-total-label">Grand Total</span>
-                    <input type="number" class="cost-input" id="grand-total-value" min="0" readonly>
-                </div>
+            <div class="grand-total-row">
+                <label class="grand-total-label">Grand Total</label>
+                <output type="number" id="grand-total-value" class="grand-total-output" min="0"></output>
             </div>
         </div>
+
     </div>
 
 
@@ -103,7 +106,7 @@
                 addRowBtn: document.getElementById("add-person-row"),
                 calculateBtn: document.getElementById("calculate-btn"),
                 formListOutput: document.getElementById("form-list-output"),
-                listOutputRows: document.getElementById("list-output-rows"),
+                grandTotalRow: document.querySelector(".grand-total-row"),
                 grandTotalValue: document.getElementById("grand-total-value"),
                 subtotalInput: document.getElementById("subtotal-input"),
                 taxInput: document.getElementById("tax-input"),
@@ -151,10 +154,8 @@
 
                 row.innerHTML = `
                     <span class="row-count">${index}</span>
-                    <div class="row-fields">
-                        <input type="text" class="name-input" value="${name}" readonly>
-                        <input type="number" class="cost-input" value="${amount.toFixed(2)}" readonly>
-                    </div>
+                    <output class="name-output">${name}</output>
+                    <output class="amount-output">${amount.toFixed(2)}</output>
                 `;
 
                 return row;
@@ -176,18 +177,20 @@
             }
 
             function updateOutputRows(breakdown, people) {
-                elements.listOutputRows.innerHTML = "";
+                // Remove all output rows (keep header and grand-total)
+                const rows = elements.formListOutput.querySelectorAll(".list-output");
+                rows.forEach(row => row.remove());
+                
                 let grandTotal = 0;
 
                 people.forEach((name, index) => {
                     const amount = breakdown[name] || 0;
                     grandTotal += amount;
-                    elements.listOutputRows.appendChild(
-                        createOutputRow(index + 1, name, amount)
-                    );
+                    const row = createOutputRow(index + 1, name, amount);
+                    elements.grandTotalRow.insertAdjacentElement("beforebegin", row);
                 });
 
-                elements.grandTotalValue.value = grandTotal.toFixed(2);
+                elements.grandTotalValue.textContent = grandTotal.toFixed(2);
                 elements.formListOutput.classList.remove("is-hidden");
             }
 
