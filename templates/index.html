@@ -81,8 +81,8 @@
 
             <div class="list-output" id="list-output-row-0">
                 <span class="row-count">1</span>
-                <output type="text" class="name-output"></output>
-                <output type="number" class="amount-output" min="0"></output>
+                <output class="name-output"></output>
+                <output class="amount-output"></output>
             </div>
 
             <div class="grand-total-row">
@@ -169,8 +169,11 @@
                 rows.forEach(row => {
                     const name = row.querySelector(".name-input")?.value.trim() || "";
                     const cost = Number(row.querySelector(".cost-input")?.value) || 0;
-                    people.push(name);
-                    costs.push(cost);
+
+                    if (name !== "") {
+                        people.push(name);
+                        costs.push(cost);
+                    }
                 });
 
                 return { people, costs };
@@ -218,10 +221,15 @@
                         body: JSON.stringify(payload)
                     });
 
+                    if (!response.ok) {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+
                     const breakdown = await response.json();
                     updateOutputRows(breakdown, people);
                 } catch (error) {
                     console.error("Calculation error:", error);
+                    elements.formListOutput.classList.add("is-hidden");
                 }
             }
 

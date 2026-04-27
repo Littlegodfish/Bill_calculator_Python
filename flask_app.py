@@ -4,7 +4,6 @@ from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from bill_calculator import subtotal_checker, tax_tip_calculation
-from bill_calculator import subtotal_checker, tax_tip_calculation
 
 # My app setup
 app = Flask(__name__) 
