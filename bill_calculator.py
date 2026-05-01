@@ -60,7 +60,8 @@ def print_out(new_money_list, people_list):
 
 def print_details(details_list):
     print("Breakdown:")
-    print(details_list)
+    for person_details in details_list:
+        print(person_details)
 
 def main():
     people_string, subtotal, tax, tip, evenly_split_tip = collect_input()
