@@ -55,7 +55,15 @@ def split():
         evenly_split_tip = request.form.get('evenly_split_tip') == 'y'
 
         subtotal_checker(subtotal, money_list)
-        results = tax_tip_calculation(tax, tip, subtotal, money_list, evenly_split_tip, len(people_list))
+        results, _ = tax_tip_calculation(
+            tax,
+            tip,
+            subtotal,
+            money_list,
+            people_list,
+            evenly_split_tip,
+            len(people_list)
+        )
         breakdown = dict(zip(people_list, [round(r, 2) for r in results]))
         return render_template("split.html", breakdown=breakdown)
     return render_template("split.html", breakdown=None)
@@ -96,7 +104,15 @@ def calculate():
     evenly_split_tip = bool(data.get('evenly_split_tip', False))
 
     subtotal_checker(subtotal, money_list)
-    results = tax_tip_calculation(tax, tip, subtotal, money_list, evenly_split_tip, len(people_list))
+    results, _ = tax_tip_calculation(
+        tax,
+        tip,
+        subtotal,
+        money_list,
+        people_list,
+        evenly_split_tip,
+        len(people_list)
+    )
     breakdown = {name: round(amount, 2) for name, amount in zip(people_list, results)}
     return jsonify(breakdown)
 
