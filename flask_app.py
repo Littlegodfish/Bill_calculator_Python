@@ -1,3 +1,5 @@
+# Stage 3A: SQLite
+
 # Imports 
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_scss import Scss
@@ -22,6 +24,30 @@ class MyTask(db.Model):
 
     def __repr__(self) -> str:
         return f"Task {self.id}"
+# Data Class: Receipt: Contains ID, Title, Subtotal, Tax, Tip, Grand Total, Split Tip Evenly (Boolean), Created Date
+class Receipt(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    subtotal = db.Column(db.Float, nullable=False)
+    tax = db.Column(db.Float, nullable=False)
+    tip = db.Column(db.Float, nullable=False)
+    grand_total = db.Column(db.Float, nullable=False)
+    split_tip_evenly = db.Column(db.Boolean, default=False)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+
+    people = db.relationship(
+        "ReceiptPerson",
+        backref="receipt",
+        cascade="all, delete-orphan"
+    )
+
+# Data Class: ReceiptPerson: Contains ID, Receipt ID (Foreign Key), Name, Base Cost, Final Amount
+class ReceiptPerson(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    receipt_id = db.Column(db.Integer, db.ForeignKey("receipt.id"), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    base_cost = db.Column(db.Float, nullable=False)
+    final_amount = db.Column(db.Float, nullable=False)
 
 #Routes to webpages
 #Home page

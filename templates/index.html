@@ -7,14 +7,14 @@
 {% endblock %}
 
 {% block body %}
-    
+    <button type="button" id="save-receipt-btn">Save Receipt</button>
     <div class ="content">
         <div class="form-title">
             <div class="form-name">
                 <input type="text" class="header-input" placeholder="Expense Title #1">
                 <p class="form-hint">E.g. KFC 3/21/2025</p>
             </div>
-            <button class="btn-primary">Add Receipt</button>
+            <button class="btn-primary">Scan Receipt</button>
         </div>
 
         <div class="form-list-input">
@@ -66,6 +66,7 @@
                 </div>
             </div>
 
+
             <div class="calculate-button-row">
                 <button type="button" id="calculate-btn">Calculate</button>
             </div>
@@ -89,6 +90,7 @@
                 <label class="grand-total-label">Grand Total</label>
                 <output type="number" id="grand-total-value" class="grand-total-output" min="0"></output>
             </div>
+
         </div>
 
     </div>

@@ -25,6 +25,20 @@ body{
     margin-bottom: 50px;
     background-color: var(--background-color);
 }
+#save-receipt-btn {
+    background-color: var(--primary-button-color);
+    color: white;
+    border: none;
+    margin-bottom: 14px;
+    padding: 10px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    width: 180px;
+}
+#save-receipt-btn:hover {
+    background: var(--primary-button-color-hover);
+}
 
 /* Main Content Area */ 
 .content{
@@ -204,6 +218,7 @@ body{
     }
 
     /* Input */
+  
     .summary-input {
         border: none;
         background: transparent;
@@ -252,6 +267,7 @@ body{
     #calculate-btn {
         background-color: var(--primary-button-color);
         margin-top: 20px;
+        margin-right: 30px;
         color: white;
         border: none;
         padding: 10px 24px;
@@ -260,6 +276,7 @@ body{
         font-size: 18px;
         width: 180px;
     }
+
 
     #calculate-btn:hover {
         background: var(--primary-button-color-hover);
@@ -356,7 +373,6 @@ body{
         color: black;
         max-width: 220px;
     }
-
 }
 /* Hidden Output Form before any calculation */
 .form-list-output.is-hidden {
