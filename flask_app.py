@@ -142,6 +142,67 @@ def calculate():
     breakdown = {name: round(amount, 2) for name, amount in zip(people_list, results)}
     return jsonify(breakdown)
 
+@app.route("/save_receipt", methods=["POST"])
+def save_receipt():
+    data = request.get_json(silent=True) or {}
+
+    people = data.get("people", [])
+    costs = data.get("costs", [])
+    breakdown = data.get("breakdown", {})
+
+    if not isinstance(people, list) or not isinstance(costs, list):
+        return jsonify({"message": "Invalid receipt payload."}), 400
+
+    if len(people) == 0 or len(people) != len(costs):
+        return jsonify({"message": "People and costs must be non-empty and match."}), 400
+
+    try:
+        title = str(data.get("title", "Untitled Receipt")).strip() or "Untitled Receipt"
+        subtotal = float(data.get("subtotal", 0) or 0)
+        tax = float(data.get("tax", 0) or 0)
+        tip = float(data.get("tip", 0) or 0)
+        split_tip_evenly = bool(data.get("evenly_split_tip", False))
+
+        receipt = Receipt(
+            title=title,
+            subtotal=subtotal,
+            tax=tax,
+            tip=tip,
+            grand_total=0.0,
+            split_tip_evenly=split_tip_evenly,
+        )
+
+        grand_total = 0.0
+        for name, base_cost in zip(people, costs):
+            clean_name = str(name).strip()
+            if clean_name == "":
+                continue
+
+            base_cost_value = float(base_cost or 0)
+            final_amount_value = float(breakdown.get(clean_name, base_cost_value))
+            grand_total += final_amount_value
+
+            receipt.people.append(
+                ReceiptPerson(
+                    name=clean_name,
+                    base_cost=base_cost_value,
+                    final_amount=round(final_amount_value, 2),
+                )
+            )
+
+        if len(receipt.people) == 0:
+            return jsonify({"message": "No valid people to save."}), 400
+
+        receipt.grand_total = round(grand_total, 2)
+
+        db.session.add(receipt)
+        db.session.commit()
+
+        return jsonify({"message": "Receipt saved successfully.", "receipt_id": receipt.id}), 201
+    except Exception:
+        db.session.rollback()
+        return jsonify({"message": "Failed to save receipt on the server."}), 500
+
 #Runner & Debugger
 if __name__ == "__main__":
     with app.app_context():

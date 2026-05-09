@@ -8,6 +8,7 @@
 
 {% block body %}
     <button type="button" id="save-receipt-btn">Save Receipt</button>
+    
     <div class ="content">
         <div class="form-title">
             <div class="form-name">
@@ -96,8 +97,6 @@
     </div>
 
 
-
-
     
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -113,10 +112,14 @@
                 subtotalInput: document.getElementById("subtotal-input"),
                 taxInput: document.getElementById("tax-input"),
                 tipInput: document.getElementById("tip-input"),
-                splitTipCheckbox: document.getElementById("split-tip-checkbox")
+                splitTipCheckbox: document.getElementById("split-tip-checkbox"),
+                saveReceiptBtn: document.getElementById("save-receipt-btn")
             };
 
             let rowCounter = 3;
+            let latestBreakdown = null;
+            let latestPeople = [];
+            let latestCosts = [];
 
             function toggleHint() {
                 elements.formHint.style.display =
@@ -228,12 +231,51 @@
                     }
 
                     const breakdown = await response.json();
+                    latestBreakdown = breakdown;
+                    latestPeople = people;
+                    latestCosts = costs;
                     updateOutputRows(breakdown, people);
                 } catch (error) {
                     console.error("Calculation error:", error);
                     elements.formListOutput.classList.add("is-hidden");
                 }
             }
+            async function handleSaveReceipt() {
+                if (!latestBreakdown) {
+                    alert("Please calculate before saving.");
+                    return;
+                }
+
+                const payload = {
+                    title: elements.headerInput.value.trim() || "Untitled Receipt",
+                    people: latestPeople,
+                    costs: latestCosts,
+                    subtotal: Number(elements.subtotalInput.value) || 0,
+                    tax: Number(elements.taxInput.value) || 0,
+                    tip: Number(elements.tipInput.value) || 0,
+                    evenly_split_tip: elements.splitTipCheckbox.checked,
+                    breakdown: latestBreakdown
+                };
+
+                try {
+                    const response = await fetch("/save_receipt", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Server error: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    alert(result.message || "Receipt saved.");
+                } catch (error) {
+                    console.error("Save error:", error);
+                    alert("Failed to save receipt.");
+                }
+            }
+            elements.saveReceiptBtn.addEventListener("click", handleSaveReceipt);
 
             elements.headerInput.addEventListener("input", toggleHint);
 
