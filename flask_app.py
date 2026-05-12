@@ -4,7 +4,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
+from sqlalchemy import text, JSON
 from datetime import datetime
 from bill_calculator import subtotal_checker, tax_tip_calculation
 
@@ -18,14 +18,32 @@ db = SQLAlchemy(app)
 
 def ensure_receipt_schema():
     """Add missing columns for older SQLite schemas without full migration tooling."""
-    columns = db.session.execute(text("PRAGMA table_info(receipt)")).fetchall()
-    column_names = {column[1] for column in columns}
+    try:
+        columns = db.session.execute(text("PRAGMA table_info(receipt)")).fetchall()
+        column_names = {column[1] for column in columns}
 
-    if "grand_total" not in column_names:
-        db.session.execute(
-            text("ALTER TABLE receipt ADD COLUMN grand_total FLOAT NOT NULL DEFAULT 0.0")
-        )
+        if "grand_total" not in column_names:
+            db.session.execute(
+                text("ALTER TABLE receipt ADD COLUMN grand_total FLOAT NOT NULL DEFAULT 0.0")
+            )
+            print("✓ Added grand_total column to receipt")
+
+        if "user_id" not in column_names:
+            db.session.execute(
+                text("ALTER TABLE receipt ADD COLUMN user_id INTEGER DEFAULT 1")
+            )
+            print("✓ Added user_id column to receipt")
+
+        if "people" not in column_names:
+            db.session.execute(
+                text("ALTER TABLE receipt ADD COLUMN people TEXT DEFAULT '[]'")
+            )
+            print("✓ Added people column to receipt")
+
         db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Schema check note: {e}")
 
 #Data Class: Row of Data
 class MyTask(db.Model):
@@ -37,31 +55,32 @@ class MyTask(db.Model):
 
     def __repr__(self) -> str:
         return f"Task {self.id}"
-# Data Class: Receipt: Contains ID, Title, Subtotal, Tax, Tip, Grand Total, Split Tip Evenly (Boolean), Created Date
+# Data Class: Receipt: Contains ID, Title, Subtotal, Tax, Tip, Grand Total, Split Tip Evenly (Boolean), People, Created Date
 class Receipt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     title = db.Column(db.String(100), nullable=False)
     subtotal = db.Column(db.Float, nullable=False)
     tax = db.Column(db.Float, nullable=False)
     tip = db.Column(db.Float, nullable=False)
     grand_total = db.Column(db.Float, nullable=False)
     split_tip_evenly = db.Column(db.Boolean, default=False)
+    
+    # Store people data as JSON: [{"name": str, "base_cost": float, "final_amount": float}, ...]
+    people = db.Column(JSON, default=list)
+    
     created = db.Column(db.DateTime, default=datetime.utcnow)
 
-    people = db.relationship(
-        "ReceiptPerson",
-        backref="receipt",
-        cascade="all, delete-orphan"
-    )
+    def __repr__(self) -> str:
+        return f"Receipt {self.id}: {self.title}"
 
-# Data Class: ReceiptPerson: Contains ID, Receipt ID (Foreign Key), Name, Base Cost, Final Amount
-class ReceiptPerson(db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    receipt_id = db.Column(db.Integer, db.ForeignKey("receipt.id"), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    base_cost = db.Column(db.Float, nullable=False)
-    final_amount = db.Column(db.Float, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
+    receipts = db.relationship("Receipt", backref="user", lazy=True)
 
 with app.app_context():
     db.create_all()
@@ -188,9 +207,12 @@ def save_receipt():
             tip=tip,
             grand_total=0.0,
             split_tip_evenly=split_tip_evenly,
+            # user_id will be set when authentication is implemented
         )
 
         grand_total = 0.0
+        people_data = []
+        
         for name, base_cost in zip(people, costs):
             clean_name = str(name).strip()
             if clean_name == "":
@@ -200,17 +222,16 @@ def save_receipt():
             final_amount_value = float(breakdown.get(clean_name, base_cost_value))
             grand_total += final_amount_value
 
-            receipt.people.append(
-                ReceiptPerson(
-                    name=clean_name,
-                    base_cost=base_cost_value,
-                    final_amount=round(final_amount_value, 2),
-                )
-            )
+            people_data.append({
+                "name": clean_name,
+                "base_cost": round(base_cost_value, 2),
+                "final_amount": round(final_amount_value, 2),
+            })
 
-        if len(receipt.people) == 0:
+        if len(people_data) == 0:
             return jsonify({"message": "No valid people to save."}), 400
 
+        receipt.people = people_data
         receipt.grand_total = round(grand_total, 2)
 
         db.session.add(receipt)
