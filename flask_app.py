@@ -4,6 +4,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from datetime import datetime
 from bill_calculator import subtotal_checker, tax_tip_calculation
 
@@ -13,6 +14,18 @@ Scss(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
+
+
+def ensure_receipt_schema():
+    """Add missing columns for older SQLite schemas without full migration tooling."""
+    columns = db.session.execute(text("PRAGMA table_info(receipt)")).fetchall()
+    column_names = {column[1] for column in columns}
+
+    if "grand_total" not in column_names:
+        db.session.execute(
+            text("ALTER TABLE receipt ADD COLUMN grand_total FLOAT NOT NULL DEFAULT 0.0")
+        )
+        db.session.commit()
 
 #Data Class: Row of Data
 class MyTask(db.Model):
@@ -48,6 +61,11 @@ class ReceiptPerson(db.Model):
     name = db.Column(db.String(100), nullable=False)
     base_cost = db.Column(db.Float, nullable=False)
     final_amount = db.Column(db.Float, nullable=False)
+
+
+with app.app_context():
+    db.create_all()
+    ensure_receipt_schema()
 
 #Routes to webpages
 #Home page
@@ -199,12 +217,11 @@ def save_receipt():
         db.session.commit()
 
         return jsonify({"message": "Receipt saved successfully.", "receipt_id": receipt.id}), 201
-    except Exception:
+    except Exception as e:
         db.session.rollback()
+        app.logger.exception("Failed to save receipt: %s", e)
         return jsonify({"message": "Failed to save receipt on the server."}), 500
 
 #Runner & Debugger
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
     app.run(debug= True)

@@ -265,14 +265,16 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Server error: ${response.status}`);
+                        const errorData = await response.json().catch(() => ({}));
+                        const errorMessage = errorData.message || `Server error: ${response.status}`;
+                        throw new Error(errorMessage);
                     }
 
                     const result = await response.json();
                     alert(result.message || "Receipt saved.");
                 } catch (error) {
                     console.error("Save error:", error);
-                    alert("Failed to save receipt.");
+                    alert(error.message || "Failed to save receipt.");
                 }
             }
             elements.saveReceiptBtn.addEventListener("click", handleSaveReceipt);
